@@ -1,7 +1,16 @@
 #!/bin/sh
-# onsen.sh Ver. 0.6 (2009.10.16)
+# onsen.sh Ver. 0.7 (2011.04.24)
 
-GOTDATE=`date +%y%m%d`
+STR=$1
+PRECODE=onsen`date +%w%d%H`
+PDATA="code=`md5 -q -s $PRECODE`&file%5Fname=regular%5F"
+REGXMLNUM=`date +%w`
+URL="http://onsen.ag/getXML.php?`date +%s`"
+
+wget --post-data="${PDATA}${REGXMLNUM}" $URL | grep `date +%y%m%d` | uniq | grep ${STR} | wget
+
+exit 0
+
 TFLAG=FALSE
 TITLE=
 OPT=
@@ -22,7 +31,6 @@ done
 shift `expr $OPTIND - 1`
 
 if [ $# -eq 1 ]; then
-  #cd $HOME
   STR=$1
   URL=http://onsen.ag/asx/${STR}${GOTDATE}.asx
   MMS=`wget -q -O - $URL | grep $STR | awk '{gsub(/"/,"",$4);print $4;}'`
