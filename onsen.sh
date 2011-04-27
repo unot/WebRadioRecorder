@@ -1,12 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 # onsen.sh Ver. 0.7 (2011.04.24)
 
-STR=$1
+# STR=$1
+# target date
 GOTDATE=`date +%y%m%d`
+# precode of POST data
 PRECODE=onsen`date +%w%d%H`
-PDATA="code=`md5 -q -s $PRECODE`&file%5Fname=regular%5F"
+# POST data
+PDATA="code=`md5 -q -s $PRECODE`\&file%5Fname=regular%5F"
+# week number
 REGXMLNUM=`date +%w`
+# onsen URL
 URL="http://onsen.ag/getXML.php?`date +%s`000"
+# tmp file
+TMPFILE="/var/tmp/tmp.$$"
 
 TFLAG=FALSE
 TITLE=
@@ -28,8 +35,47 @@ do
 done
 shift `expr $OPTIND - 1`
 
-wget --post-data="${PDATA}${REGXMLNUM}" ${URL} | grep ${GOTDATE} | uniq | grep ${STR} | wget
+# download regular XML file
+wget -q --post-data="${PDATA}${REGXMLNUM}" ${URL} -O ${TMPFILE}
 
+# number of program
+PROGNUM=`grep -c '<title>' ${TMPFILE}`
+echo "番組数: $PROGNUM"
+
+# index number
+i=1
+while test ${PROGNUM} -gt 0
+do
+  PROGNUM=`expr ${PROGNUM} - 1`
+  ISNEW=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/isNew[${i}]\"].text"`
+  TITLE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/title[${i}]\"].text"`
+  NUM=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/number[${i}]\"].text"`
+  UPDATE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/update[${i}]\"].text" | tr '/' '-'`
+  MP3FILE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/fileUrlIphone[${i}]\"].text"`
+  i=`expr ${i} + 1`
+  if test ${ISNEW} -eq 0 ; then
+    continue
+  fi
+  # Question
+  echo -n "Download \"${TITLE} 第${NUM}回(${UPDATE}).mp3\"?[yes/no/quit] "
+  read ANSWER
+  case `echo "$ANSWER" | tr [A-Z] [a-z]` in
+  yes | y ) ANSWER=yes
+            #break
+            ;;
+  no | n ) ANSWER=no
+           continue
+           ;;
+  quit | q ) break
+             ;;
+  * ) #break
+      ;;
+  esac
+
+  wget -O "${TITLE} 第${NUM}回(${UPDATE}).mp3" ${MP3FILE}
+done
+
+rm ${TMPFILE}
 exit 0
 
 
