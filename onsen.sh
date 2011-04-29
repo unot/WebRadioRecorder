@@ -1,7 +1,8 @@
 #!/bin/bash
-# onsen.sh Ver. 0.7 (2011.04.24)
+# onsen.sh Ver. 0.8 (2011.04.29)
+# recording tool for onsen.ag
+# require openssl, wget and ruby
 
-# STR=$1
 # target date
 GOTDATE=`date +%y%m%d`
 # precode of POST data
@@ -15,20 +16,24 @@ URL="http://onsen.ag/getXML.php?`date +%s`000"
 # tmp file
 TMPFILE="/var/tmp/tmp.$$"
 
-TFLAG=FALSE
-TITLE=
+AFLAG=FALSE
+WGETOPTION=-q
+RMOPTION=
 OPT=
-while getopts tyd: OPT
+while getopts ayvw: OPT
 do
   case $OPT in
-    t) TFLAG=TRUE
-       ;; # empty
+    a) AFLAG=TRUE
+       ;; # with all programs on GOTDATE
     y) GOTDATE=`TZ=JST+15 date +%y%m%d`
        REGXMLNUM=`TZ=JST+15 date +%w`
        ;; # yesterday
-    d) GOTDATE=$OPTARG
-       ;; # indicate date
-    \?) echo "Usage: $0 [-ty] [-d yymmdd] hoge" 1>&2
+    v) WGETOPTION=
+       RMOPTION=-i
+       ;; # verbose mode
+    w) REGXMLNUM=$OPTARG
+       ;; # indicate week number
+    \?) echo "Usage: $0 [-avy] [-w weeknumber]" 1>&2
         exit 1
         ;;
   esac
@@ -36,11 +41,11 @@ done
 shift `expr $OPTIND - 1`
 
 # download regular XML file
-wget -q --post-data="${PDATA}${REGXMLNUM}" ${URL} -O ${TMPFILE}
+wget ${WGETOPTION} --post-data="${PDATA}${REGXMLNUM}" ${URL} -O ${TMPFILE}
 
 # number of program
 PROGNUM=`grep -c '<title>' ${TMPFILE}`
-echo "番組数: $PROGNUM"
+#echo "番組数: $PROGNUM"
 
 # index number
 i=1
@@ -48,49 +53,33 @@ while test ${PROGNUM} -gt 0
 do
   PROGNUM=`expr ${PROGNUM} - 1`
   ISNEW=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/isNew[${i}]\"].text"`
+  if test ${AFLAG} = TRUE -o ${ISNEW} = "0"; then # AFLAG
+    ISNEW=1
+  fi
   TITLE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/title[${i}]\"].text"`
   NUM=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/number[${i}]\"].text"`
-  UPDATE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/update[${i}]\"].text" | tr '/' '-'`
+  UPDATE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/update[${i}]\"].text" | tr '/' '月' | sed -e 's/$/日配信/'`
   MP3FILE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/fileUrlIphone[${i}]\"].text"`
   i=`expr ${i} + 1`
-  if test ${ISNEW} -eq 0 ; then
+  if test ${ISNEW} != "1" ; then
     continue
   fi
   # Question
-  echo -n "Download \"${TITLE} 第${NUM}回(${UPDATE}).mp3\"?[yes/no/quit] "
+  echo -n "Record \"${TITLE} 第${NUM}回(${UPDATE}).mp3\"?[Yes/no/quit] "
   read ANSWER
   case `echo "$ANSWER" | tr [A-Z] [a-z]` in
-  yes | y ) ANSWER=yes
-            #break
-            ;;
   no | n ) ANSWER=no
            continue
            ;;
   quit | q ) break
              ;;
-  * ) #break
+  * ) ANSWER=yes
       ;;
   esac
 
-  wget -O "${TITLE} 第${NUM}回(${UPDATE}).mp3" ${MP3FILE}
+  wget ${WGETOPTION} -O "${TITLE} 第${NUM}回(${UPDATE}).mp3" ${MP3FILE}
 done
 
-rm ${TMPFILE}
+rm ${RMOPTION} ${TMPFILE}
+
 exit 0
-
-
-if [ $# -eq 1 ]; then
-  STR=$1
-  URL=http://onsen.ag/asx/${STR}${GOTDATE}.asx
-  MMS=`wget -q -O - $URL | grep $STR | awk '{gsub(/"/,"",$4);print $4;}'`
-  if [ $TFLAG = "TRUE" ]; then
-    TITLE=`wget -q -O - $URL | nkf -w | sed -n 's/<TITLE>\(.*\)<\/TITLE>/\1/p' | sed -e 's|/|-|g' | tr -d "\r" | tail -n 1`.wmv
-    echo "$URL"
-    echo "$MMS"
-    echo "$TITLE"
-  fi
-  mimms $MMS ${TITLE:+"$TITLE"}
-else
-  echo "Usage: $0 [-ty] [-d yymmdd] hoge" 1>&2
-fi
-
