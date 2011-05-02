@@ -1,5 +1,5 @@
 #!/bin/bash
-# onsen.sh Ver. 0.8 (2011.04.29)
+# onsen.sh Ver. 0.8.1 (2011.05.02)
 # recording tool for onsen.ag
 # require openssl, wget and ruby
 
@@ -33,7 +33,7 @@ do
        ;; # verbose mode
     w) REGXMLNUM=$OPTARG
        ;; # indicate week number
-    \?) echo "Usage: $0 [-avy] [-w weeknumber]" 1>&2
+    \?) echo "Usage: `basename $0` [-avy] [-w weeknumber]" 1>&2
         exit 1
         ;;
   esac
@@ -53,7 +53,7 @@ while test ${PROGNUM} -gt 0
 do
   PROGNUM=`expr ${PROGNUM} - 1`
   ISNEW=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/isNew[${i}]\"].text"`
-  if test ${AFLAG} = TRUE -o ${ISNEW} = "0"; then # AFLAG
+  if test ${AFLAG} = TRUE -a ${ISNEW} = 0 ; then
     ISNEW=1
   fi
   TITLE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/title[${i}]\"].text"`
@@ -61,7 +61,7 @@ do
   UPDATE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/update[${i}]\"].text" | tr '/' '月' | sed -e 's/$/日配信/'`
   MP3FILE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/fileUrlIphone[${i}]\"].text"`
   i=`expr ${i} + 1`
-  if test ${ISNEW} != "1" ; then
+  if test ${ISNEW} != 1 ; then
     continue
   fi
   # Question

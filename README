@@ -1,1 +1,31 @@
-Those are web radio recording tools for animate.tv, onsen and hibiki
+Those are web radio recording tools for animate.tv, onsen.ag and hibiki-radio.jp.
+
+1. onsen.sh
+usage: onsen.sh [-avy] [-w weeknumber]
+
+description:
+  This is a recording script for onsen.ag.  Without arguments, this script records today programs.
+
+options:
+-a
+  all programs
+-v
+  verbose mode
+-y
+  record yesterday programs
+-w weeknumber
+  indicate weeknumber[0-6]
+
+2. hibiki.sh
+usage: hibiki.sh hoge
+
+description:
+  This is a recording script for hibiki-radio.jp.  This script requires a program name.  hibiki.sh requires MiMMS command.
+
+3. animatetv.zsh
+usage: animatetv.zsh hoge
+
+description:
+  This is a recording script for animate.tv.  This script requires a program name indicated by 'http://animate.tv/radio/details.php?id='.  animatetv.zsh requires MiMMS command.
+
+https://github.com/unot/WebRadioRecorder
