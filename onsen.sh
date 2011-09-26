@@ -8,7 +8,7 @@ GOTDATE=`date +%y%m%d`
 # precode of POST data
 PRECODE=onsen`date +%w%d%H`
 # POST data
-PDATA="code=`md5 -q -s $PRECODE`\&file%5Fname=regular%5F"
+PDATA="code=`openssl dgst -md5 -q -s $PRECODE`\&file%5Fname=regular%5F"
 # week number
 REGXMLNUM=`date +%w`
 # onsen URL
