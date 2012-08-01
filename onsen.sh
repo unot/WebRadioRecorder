@@ -1,5 +1,5 @@
-#!/bin/bash
-# onsen.sh Ver. 0.8.1 (2011.05.02)
+#!/bin/bash -e
+# onsen.sh Ver. 0.8.3 (2012.08.01)
 # recording tool for onsen.ag
 # require openssl, wget and ruby
 
@@ -8,7 +8,7 @@ GOTDATE=`date +%y%m%d`
 # precode of POST data
 PRECODE=onsen`date +%w%d%H`
 # POST data
-PDATA="code=`openssl dgst -md5 -q -s $PRECODE`\&file%5Fname=regular%5F"
+PDATA="code=`echo $PRECODE | openssl dgst -md5`\&file%5Fname=regular%5F"
 # week number
 REGXMLNUM=`date +%w`
 # onsen URL
@@ -44,7 +44,7 @@ shift `expr $OPTIND - 1`
 wget ${WGETOPTION} --post-data="${PDATA}${REGXMLNUM}" ${URL} -O ${TMPFILE}
 
 # number of program
-PROGNUM=`grep -c '<title>' ${TMPFILE}`
+PROGNUM=`grep -c '<title>' ${TMPFILE} | cut -d ":" -f2`
 #echo "番組数: $PROGNUM"
 
 # index number
