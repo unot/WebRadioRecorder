@@ -15,10 +15,10 @@ ${RTMPDUMP} --rtmp "rtmpe://netradio-fm-flash.nhk.jp" \
     --live \
     -B $STOPSECS \
     -o ${FLVFILE}
-if [ $? != 0 ]; then
-    rm ${FLVFILE}
-    exit 1
-fi
+# if [ $? != 0 ]; then
+#     rm ${FLVFILE}
+#     exit 1
+# fi
 ${FFMPEG} -i ${FLVFILE} -vn -acodec copy ${AACFILE}
 if [ $? != 0 ]; then
     # http://bui.asablo.jp/blog/2012/02/24/6347167
