@@ -1,6 +1,6 @@
 #!/bin/sh -ex
 DESTDIR="$HOME"
-playerurl=http://radiko.jp/player/swf/player_2.0.1.00.swf
+playerurl=http://radiko.jp/player/swf/player_3.0.0.01.swf
 playerfile=${DESTDIR}/player.swf
 keyfile=${DESTDIR}/authkey.png
 XDATE=`date -v+1M +"%Y-%m%d-%H%M"`
@@ -36,7 +36,7 @@ fi
 # get keydata (need swftool)
 #
 if [ ! -f $keyfile ]; then
-  ${SWFEXTRACT} -b 5 $playerfile -o $keyfile
+  ${SWFEXTRACT} -b 14 $playerfile -o $keyfile
 
   if [ ! -f $keyfile ]; then
     echo "failed get keydata"
@@ -115,9 +115,9 @@ rm -f auth2_fms
 # rtmpdump
 #
 ${RTMPDUMP} -v \
-         -r "rtmpe://radiko.smartstream.ne.jp" \
-         --playpath "simul-stream" \
-         --app "${channel}/_defInst_" \
+         -r "rtmpe://w-radiko.smartstream.ne.jp" \
+         --playpath "simul-stream.stream" \
+         --app "${channel}/_definst_" \
          -W $playerurl \
          -C S:"" -C S:"" -C S:"" -C S:$authtoken \
          --live \
