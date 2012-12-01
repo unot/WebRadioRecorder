@@ -20,6 +20,8 @@ AACFILE=${output%.flv}.aac
 STOPMINS=${2:-120}
 STOPSECS=`expr ${STOPMINS} \* 60 + 120`
 
+trap 'rm -f ${output} ${AACFILE} $playerfile $keyfile' EXIT
+
 #
 # get player
 #
@@ -133,5 +135,5 @@ if [ $? != 0 ]; then
     ${FFMPEG} -i ${output} ${AACFILE}
 fi
 ${AFCONVERT} -f m4af -d aach -b 48000 ${AACFILE}
-rm  ${output} ${AACFILE} $playerfile $keyfile
+
 exit 0

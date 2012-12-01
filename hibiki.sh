@@ -1,10 +1,12 @@
 #!/bin/sh -e
 # hibiki.sh ver.0.3.1 (2011-06-12)
 # require wget, ruby, nkf and mimms
+TMPFILE="/var/tmp/tmp.$$"
+trap 'rm -f ${TMPFILE}' EXIT
 
 if [ $# -eq 1 ]; then
   STR=$1
-  TMPFILE="/var/tmp/tmp.$$"
+  
 
   # save asx file
   wget -q -O - http://hibiki-radio.jp/description/${STR} | grep movie | ruby -ruri -e 'puts URI.extract(ARGF.read, "http")' | head -1 | xargs wget -q -O - | grep asx | ruby -ruri -e 'puts URI.extract(ARGF.read, "http")' | uniq | xargs wget -q -O - | nkf -w >${TMPFILE}
@@ -26,7 +28,6 @@ if [ $# -eq 1 ]; then
   fi
 
   mimms ${WMVFILE} "${TITLE}.asf"
-  rm ${TMPFILE}
   exit 0
 else
   echo "usage: `basename $0` STRING"

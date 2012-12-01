@@ -8,6 +8,7 @@ AFCONVERT=/usr/bin/afconvert
 SAVEDIR=/Users/unot
 FLVFILE=${SAVEDIR}/NHK-FM_${XDATE}.flv
 AACFILE=${FLVFILE%.flv}.aac
+trap 'rm ${FLVFILE} ${AACFILE}' EXIT
 ${RTMPDUMP} --rtmp "rtmpe://netradio-fm-flash.nhk.jp" \
     --playpath 'NetRadio_FM_flash@63343' \
     --app "live" \
@@ -25,5 +26,5 @@ if [ $? != 0 ]; then
     ${FFMPEG} -i ${FLVFILE} ${AACFILE}
 fi
 ${AFCONVERT} -f m4af -d aach -b 48000 ${AACFILE}
-rm ${FLVFILE} ${AACFILE}
+
 exit 0
