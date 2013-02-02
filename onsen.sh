@@ -1,5 +1,5 @@
 #!/bin/bash -e
-# onsen.sh Ver. 0.8.3 (2012.08.01)
+# onsen.sh Ver. 0.8.4 (2013.02.02)
 # recording tool for onsen.ag
 # require openssl, wget and ruby
 
@@ -8,7 +8,7 @@ GOTDATE=`date +%y%m%d`
 # precode of POST data
 PRECODE=onsen`date +%w%d%H`
 # POST data
-PDATA="code=`echo $PRECODE | openssl dgst -md5`\&file%5Fname=regular%5F"
+PDATA="code=`echo $PRECODE | openssl dgst -md5 | sed -e 's/(stdin)= //'`&file%5Fname=regular%5F"
 # week number
 REGXMLNUM=`date +%w`
 # onsen URL
