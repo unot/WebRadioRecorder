@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# hibiki.sh ver.0.5.3 (2013-01-31)
+# hibiki.sh ver.0.5.5 (2013-02-05)
 # require wget, ruby, and mimms
 TMPFILE="/var/tmp/tmp.$$"
 trap 'rm -f ${TMPFILE}' EXIT
@@ -20,8 +20,8 @@ if [ $# -eq 1 ]; then
     exit 1
   fi
 
-  mimms ${WMVFILE} "${TITLE}.asf"
-  exit 0
+  mimms -r ${WMVFILE} "${TITLE}.asf" || mimms -r ${WMVFILE} "${TITLE}.asf"
+
 else
   echo "usage: `basename $0` STRING"
 fi
