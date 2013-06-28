@@ -1,5 +1,5 @@
 #!/bin/bash -e
-# onsen.sh Ver. 0.8.4 (2013.02.02)
+# onsen.sh Ver. 0.8.5 (2013.06.28)
 # recording tool for onsen.ag
 # require openssl, wget and ruby
 
@@ -56,7 +56,7 @@ do
   if test ${AFLAG} = TRUE -a ${ISNEW} = 0 ; then
     ISNEW=1
   fi
-  TITLE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/title[${i}]\"].text"`
+  TITLE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/title[${i}]\"].text" | tr '/' '／'`
   NUM=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/number[${i}]\"].text"`
   UPDATE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/update[${i}]\"].text" | tr '/' '月' | sed -e 's/$/日配信/'`
   MP3FILE=`cat ${TMPFILE} | ruby -rrexml/document -e "puts REXML::Document.new(ARGF).elements[\"data/regular/program/fileUrlIphone[${i}]\"].text"`

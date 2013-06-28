@@ -20,7 +20,7 @@ if [ $# = 1 ]; then
     rm ${TMPFILE}
     exit 1
   fi
-  mimms ${MMS} "${TITLE}.wma"
+  mimms -r ${MMS} "${TITLE}.wma"
 #  echo ${MMS}
 #  echo "${TITLE}.wma"
 #  : >"${TITLE}.wma"

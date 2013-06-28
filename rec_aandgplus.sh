@@ -11,10 +11,11 @@ OUTFILE="${DESTDIR}/${TITLE}_${XDATE}.flv"
 STOPMINS=${2:-30}
 STOPSECS=`expr ${STOPMINS} \* 60 + 120`
 
-for i in 5 4 3 2 1 ; do
-	${RTMPDUMP} --rtmp "rtmpe://fms1.uniqueradio.jp/" \
-	--playpath "aandg$i" \
-	--app "?rtmp://fms-base1.mitene.ad.jp/agqr/" \
+for i in 2 1 ; do
+#	${RTMPDUMP} --rtmp "rtmpe://fms1.uniqueradio.jp/" \
+#	--playpath "aandg$i" \
+#	--app "?rtmp://fms-base1.mitene.ad.jp/agqr/" \
+	${RTMPDUMP} --rtmp "rtmp://fms-base$i.mitene.ad.jp/agqr/aandg2" \
 	--stop ${STOPSECS} \
 	--live \
 	-o "${OUTFILE}"
