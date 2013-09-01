@@ -7,7 +7,7 @@ RMOPT=
 
 if [ $# = 1 ]; then
   REFID=$1
-  ASX=http://www.animate.tv`wget -q http://animate.tv/radio/details.php\?id\=${REFID} -O - | nkf -w | grep play.php | head -1 | perl -nle 'm|(/play.*player)|; print $1'`
+  ASX=http://www.animate.tv`wget -q http://animate.tv/radio/details.php\?id\=${REFID} -O - | nkf -w | grep play.php | head -1 | perl -nle 'm|(/play.*?player)|; print $1'`
   wget -q --referer="http://animate.tv/radio/details.php\?id=${REFID}" --user-agent='Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)' ${ASX} -O ${TMPFILE} #- | nkf -w >${TMPFILE}
   if [ $? -ne 0 -o ! -s ${TMPFILE} ]; then
     echo "ERROR download ${ASX}"
