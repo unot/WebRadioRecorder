@@ -14,7 +14,7 @@ if [ $# = 1 ]; then
     echo "ERROR download ${ASX}"
     exit 1
   fi
-  TITLE=`cat ${TMPFILE} | perl -nle 'm|<Entry><Title>(.*)</Title>|; print $1' | nkf -w`
+  TITLE=`cat ${TMPFILE} | perl -nle 'm|<Entry><Title>(.*)</Title>|; print $1' | nkf -w | tr '/' '／'`
   MMS=`cat ${TMPFILE} | perl -nle 'm|(mms.*?wma)|; print $1'`
   if [ "${MMS}" = "" ]; then
     echo "failed to get mms url."
