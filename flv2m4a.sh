@@ -1,6 +1,6 @@
 #!/bin/sh -e
 if [ $# -ne 1 ]; then
-	echo "USAGE: `basename $0` hogehoge.flv"
+	echo "USAGE: $(basename "$0") hogehoge.flv"
 	exit 1
 fi
 

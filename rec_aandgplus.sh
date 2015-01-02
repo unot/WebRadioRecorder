@@ -15,9 +15,12 @@ for i in 2 1 ; do
 #	${RTMPDUMP} --rtmp "rtmpe://fms1.uniqueradio.jp/" \
 #	--playpath "aandg$i" \
 #	--app "?rtmp://fms-base1.mitene.ad.jp/agqr/" \
-	${RTMPDUMP} --rtmp "rtmp://fms-base$i.mitene.ad.jp/agqr/aandg2" \
-	--stop ${STOPSECS} \
-	--live \
+#	${RTMPDUMP} --rtmp "rtmp://fms-base$i.mitene.ad.jp/agqr/aandg2" \
+#	--stop ${STOPSECS} \
+#	--live \
+	${RTMPDUMP} -r "rtmpe://fms$i.uniqueradio.jp/" -y "aandg11"\
+	-a "?rtmp://fms-base$i.mitene.ad.jp/agqr/"\
+	--stop ${STOPSECS} -v\
 	-o "${OUTFILE}"
 	if [ $? -eq 0 ]; then
 		break;
