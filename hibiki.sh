@@ -13,7 +13,7 @@ if [ $# -eq 1 ]; then
 		echo "download ERROR"
 		exit 1
 	fi
-	TITLE=$(ruby -rrexml/document -e 'puts REXML::Document.new(ARGF).elements["ASX/entry/title"].text' < ${TMPFILE} | tr '/' '／')
+	TITLE=$(ruby -rrexml/document -e 'puts REXML::Document.new(ARGF).elements["ASX/entry/title"].text' < ${TMPFILE} | tr '/' '／' | sed -e 's/\(\[.*\]\)\(......\) \(.*\)/\3 \2\1/')
 	WMVFILE=$(ruby -rrexml/document -e 'puts REXML::Document.new(ARGF).elements["ASX/entry/Ref"].attributes["href"]' < ${TMPFILE})
 	if test a"$TITLE" = a"" ; then
 		echo "asx detection failed."
